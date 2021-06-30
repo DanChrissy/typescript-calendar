@@ -12,16 +12,22 @@ export default function Years({ selectedYear, handleSelectedYear, startingYear }
     const [years, setYears] = useState<number[]>([]);
     const [selected, setSelected] = useState<number>(selectedYear);
     
-    const getYears = () => {
+    const getYears = (startingPoint: number) => {
         const currentYears = [];
         for (let i = 0; i < 12; i++) {
-            currentYears.push(startingYear + i);
+            currentYears.push(startingPoint + i);
         }
         setYears([...currentYears]);
     };
 
     useEffect(() => {
-        getYears();
+        // getYears(selectedYear);
+        console.log('Selected Year: ', selectedYear);
+        console.log('Starting Year: ', startingYear);
+    }, [selectedYear, startingYear]);
+
+    useEffect(() => {
+        getYears(startingYear);
     }, [startingYear]);
 
     useEffect(() => {

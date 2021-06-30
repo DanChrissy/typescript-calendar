@@ -60,6 +60,13 @@ const Calendar: FunctionComponent<Props> = ({minDate, handleDateChange}) => {
     }, []);
 
     useEffect(() => {
+        const endYear = startingYear + 11;
+        if (selectedYear > endYear) {
+            setStartingYear(startingYear + 10);
+        }
+    }, [selectedYear]);
+
+    useEffect(() => {
         setCurrentDateMonth(new Date(selectedYear, selectedMonth, selectedDay));
     }, [selectedDay, selectedMonth, selectedYear]);
 
@@ -73,7 +80,7 @@ const Calendar: FunctionComponent<Props> = ({minDate, handleDateChange}) => {
         if (selectedYear > minYear) {
             setDisabledMonths([]);
         } else if (selectedYear === minYear) {
-            const updatedMonths = _.range(selectedMonth);
+            const updatedMonths = _.range(minMonth);
             setDisabledMonths(updatedMonths);
         }
     }, [selectedMonth, selectedYear]);
