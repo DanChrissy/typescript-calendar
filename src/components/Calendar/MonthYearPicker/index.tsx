@@ -5,12 +5,19 @@ type Props = {
     selectedItem: number | string,
     handleSelectedItem: (index: number, item: number | string | any) => void,
     data: number[] | string[],
+    min?: number,
+    disabled: number[],
     [x: string]: any
 };
 
-export default function MonthYearPicker({ selectedItem, handleSelectedItem, data = []}: Props) {
+export default function MonthYearPicker({ selectedItem, handleSelectedItem, data = [], min, disabled}: Props) {
     const isItemSelected = (item: number | string) => {
         if (selectedItem === item) return true;
+        return false;
+    };
+
+    const isDisabled = (index: number) => {
+        if (disabled.includes(index)) return true;
         return false;
     };
 
@@ -23,6 +30,7 @@ export default function MonthYearPicker({ selectedItem, handleSelectedItem, data
                             key={index}
                             dataItem={dataItem}
                             isSelected={isItemSelected(dataItem)}
+                            disabled={isDisabled(index)}
                             onSelect={() => handleSelectedItem(index, dataItem)}
                         />
                     ))
@@ -35,14 +43,16 @@ export default function MonthYearPicker({ selectedItem, handleSelectedItem, data
 type ItemProps = {
     dataItem: number | string,
     isSelected: boolean,
+    disabled: boolean,
     onSelect: () => void
 };
 // eslint-disable-next-line arrow-body-style
-const Item = ({ dataItem, isSelected, onSelect }: ItemProps) => {
+const Item = ({ dataItem, isSelected, onSelect, disabled }: ItemProps) => {
     // console.log('Is selected: ', dataItem, isSelected);
     return (
         <ItemContainer
             isSelected={isSelected}
+            disabled={disabled}
             onClick={() => onSelect()}
         >
             {dataItem}
@@ -51,7 +61,8 @@ const Item = ({ dataItem, isSelected, onSelect }: ItemProps) => {
 };
 
 type StyleProps = {
-    isSelected?: boolean
+    isSelected?: boolean,
+    disabled? :boolean
 }
 
 const PickerWrapper = styled.div`
@@ -99,5 +110,10 @@ const ItemContainer = styled.div<StyleProps>`
         background: #9E7AE7;
         border: 2px solid #9E7AE7;
         color: var(--color-white);
+    `}
+
+    ${props => props.disabled && css`
+        opacity: 0.5;
+        cursor: not-allowed;
     `}
 `;

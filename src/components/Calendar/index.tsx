@@ -3,6 +3,7 @@ import styled from 'styled-components';
 import { format, isBefore } from 'date-fns';
 
 // Assets
+import _ from 'lodash';
 import calendarUpArrow from '../../assets/svg/calendar_arrow_up.svg';
 import calendarDownArrow from '../../assets/svg/calendar_arrow_down.svg';
 
@@ -30,6 +31,7 @@ const Calendar: FunctionComponent<Props> = ({minDate, handleDateChange}) => {
     const [currentDateMonth, setCurrentDateMonth] = useState<Date>(new Date(selectedYear, selectedMonth, selectedDay));
 
     const [startingYear, setStartingYear] = useState(parsedDate(new Date(), 'yyyy'));
+    const [disabledMonths, setDisabledMonths] = useState<number[]>([]);
 
     useEffect(() => {
         if (minDate) {
@@ -64,6 +66,17 @@ const Calendar: FunctionComponent<Props> = ({minDate, handleDateChange}) => {
     useEffect(() => {
         handleDateChange(currentDateMonth);
     }, [currentDateMonth]);
+
+    useEffect(() => {
+        const minimumDate = minDate || new Date();
+        const { formattedMonth: minMonth, formattedYear: minYear} = getFormattedDate(new Date(minimumDate));
+        if (selectedYear > minYear) {
+            setDisabledMonths([]);
+        } else if (selectedYear === minYear) {
+            const updatedMonths = _.range(selectedMonth);
+            setDisabledMonths(updatedMonths);
+        }
+    }, [selectedMonth, selectedYear]);
 
     const handleShownMonth = () => {
         console.log('Handle show month');
@@ -174,6 +187,8 @@ const Calendar: FunctionComponent<Props> = ({minDate, handleDateChange}) => {
                     selectedMonth={selectedMonth}
                     selectedYear={selectedYear}
                     handleSelectedMonth={handleSelectedMonth}
+                    minMonth={getFormattedDate(new Date(minDate || new Date())).formattedMonth}
+                    disabled={disabledMonths}
                 />
             );
         }
@@ -235,8 +250,8 @@ const Calendar: FunctionComponent<Props> = ({minDate, handleDateChange}) => {
 export default Calendar;
 
 const CalendarWrapper = styled.div`
-    height: 20rem;
-    width: 20rem;
+    height: calc(20rem - 32px);
+    width: calc(20rem - 44px);
 `;
 
 const CalendarContainer = styled.div`
@@ -289,6 +304,8 @@ const CalendarMonthContainer = styled.div`
 
 const CalendarContent = styled.div`
     flex: 1;
+    display: flex;
+    align-items: center;
     /* margin-top: 1.875rem; */
     /* max-height: 12.25rem; */
 `;

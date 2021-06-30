@@ -37,6 +37,7 @@ export default function Years({ selectedYear, handleSelectedYear, startingYear }
             selectedItem={selected}
             handleSelectedItem={handleYear}
             data={years}
+            disabled={[]}
         />
     );
 }
